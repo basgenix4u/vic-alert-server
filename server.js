@@ -1232,33 +1232,49 @@ const ZONES={
 const WXI={2:'⛈️',3:'🌧️',5:'🌧️',6:'❄️',7:'🌫️',8:'⛅'};
 function wxIcon(id){if(id===800)return'☀️';if(id===801)return'🌤️';if(id>=802)return'☁️';return WXI[Math.floor(id/100)]||'🌤️';}
 
-/* ═══ MAP — Taraba State default, CLEAN WHITE tiles ═══ */
-const map=L.map('map',{center:[7.9994,11.3792],zoom:13,zoomControl:true});
-
-const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; OpenStreetMap contributors'
+/* ═══ MAP — Upgraded Satellite + Street View ═══ */
+const street=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+  maxZoom:19,
+  attribution:'&copy; OpenStreetMap contributors'
 });
 
-const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  maxZoom: 19,
-  attribution: '&copy; Esri'
+const satellite=L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  {
+    maxZoom:19,
+    attribution:'&copy; Esri'
+  }
+);
+
+const map=L.map('map',{
+  center:[7.9994,11.3792],
+  zoom:15,
+  zoomControl:true,
+  layers:[satellite]
 });
 
-const map = L.map('map', {
-  center: [7.9994, 11.3792],
-  zoom: 15,
-  zoomControl: true,
-  layers: [street]
+L.control.layers(
+  {
+    "Satellite": satellite,
+    "Street Map": street
+  },
+  {},
+  { collapsed:false }
+).addTo(map);
+
+const pinN=L.divIcon({
+  html:'<div class="map-pin"></div>',
+  className:'',
+  iconSize:[22,22],
+  iconAnchor:[11,11]
 });
 
-L.control.layers({
-  "Street Map": street,
-  "Satellite": satellite
-}).addTo(map);
-
-const pinN=L.divIcon({html:'<div class="map-pin"></div>',className:'',iconSize:[22,22],iconAnchor:[11,11]});
-const pinS=L.divIcon({html:'<div class="map-pin sos"></div>',className:'',iconSize:[22,22],iconAnchor:[11,11]});
+const pinS=L.divIcon({
+  html:'<div class="map-pin sos"></div>',
+  className:'',
+  iconSize:[22,22],
+  iconAnchor:[11,11]
+});
 
 let mk=null,fv=false,lt=0;
 const sosLy=L.layerGroup().addTo(map);
@@ -1268,14 +1284,12 @@ function mvMk(lat,lng,sos){
 
   if(!mk){
     mk=L.marker([lat,lng],{icon:ic}).addTo(map);
+    map.setView([lat,lng],18);
+    fv=true;
   } else {
     mk.setLatLng([lat,lng]);
     mk.setIcon(ic);
-  }
-
-  if(!fv){
-    map.setView([lat,lng],18);
-    fv=true;
+    map.panTo([lat,lng]);
   }
 
   document.getElementById('posVal').textContent =
