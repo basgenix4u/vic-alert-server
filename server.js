@@ -1235,9 +1235,26 @@ function wxIcon(id){if(id===800)return'☀️';if(id===801)return'🌤️';if(id
 /* ═══ MAP — Taraba State default, CLEAN WHITE tiles ═══ */
 const map=L.map('map',{center:[7.9994,11.3792],zoom:13,zoomControl:true});
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains:'abcd',maxZoom:20
+const street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+});
+
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 19,
+  attribution: '&copy; Esri'
+});
+
+const map = L.map('map', {
+  center: [7.9994, 11.3792],
+  zoom: 15,
+  zoomControl: true,
+  layers: [street]
+});
+
+L.control.layers({
+  "Street Map": street,
+  "Satellite": satellite
 }).addTo(map);
 
 const pinN=L.divIcon({html:'<div class="map-pin"></div>',className:'',iconSize:[22,22],iconAnchor:[11,11]});
