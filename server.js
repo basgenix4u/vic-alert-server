@@ -1163,7 +1163,7 @@ body{
       <div class="foot-author">
         Designed &amp; Built by <strong>Okechukwu Victor Nnaogo</strong>
       </div>
-      <div class="foot-project-line">PAS/CSC/21/073 · Computer Science · Final Year Project 2025</div>
+      <div class="foot-project-line">PAS/CSC/21/073 · Computer Science · Final Year Project 2026</div>
     </div>
 
   </aside>
