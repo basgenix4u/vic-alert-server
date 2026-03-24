@@ -1260,22 +1260,27 @@ L.control.layers({
 const pinN=L.divIcon({html:'<div class="map-pin"></div>',className:'',iconSize:[22,22],iconAnchor:[11,11]});
 const pinS=L.divIcon({html:'<div class="map-pin sos"></div>',className:'',iconSize:[22,22],iconAnchor:[11,11]});
 
-let mk=null,tr=null,tPts=[],fv=false,lt=0;
+let mk=null,fv=false,lt=0;
 const sosLy=L.layerGroup().addTo(map);
 
 function mvMk(lat,lng,sos){
   const ic=sos?pinS:pinN;
-  if(!mk){mk=L.marker([lat,lng],{icon:ic}).addTo(map);}
-  else{mk.setLatLng([lat,lng]);mk.setIcon(ic);}
-  if(!fv){map.setView([lat,lng],15);fv=true;}
-  tPts.push([lat,lng]);if(tPts.length>100)tPts.shift();
-  if(tr)map.removeLayer(tr);
-  if(tPts.length>1){
-    tr=L.polyline(tPts,{color:'#6f7c12',weight:3,opacity:0.45,dashArray:'8 6',lineCap:'round'}).addTo(map);
-  }
-  document.getElementById('posVal').textContent=lat.toFixed(6)+', '+lng.toFixed(6);
-}
 
+  if(!mk){
+    mk=L.marker([lat,lng],{icon:ic}).addTo(map);
+  } else {
+    mk.setLatLng([lat,lng]);
+    mk.setIcon(ic);
+  }
+
+  if(!fv){
+    map.setView([lat,lng],18);
+    fv=true;
+  }
+
+  document.getElementById('posVal').textContent =
+    lat.toFixed(6)+', '+lng.toFixed(6);
+}
 const $=id=>document.getElementById(id);
 
 async function pull(){
