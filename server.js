@@ -541,27 +541,4 @@ app.listen(PORT, () => {
   console.log('VIC Alert Server running on port ' + PORT);
   console.log('Dashboard: http://localhost:' + PORT);
 });
-```
 
-Click **Commit new file**.
-
----
-
-# STEP 4 — DEPLOY ON RENDER
-
-Go to **render.com**. Log in. Click **New** then **Web Service**.
-
-Click **Connect a repository**. Select your **vic-alert-server** repository.
-
-Fill in:
-- Name: **vic-alert-system**
-- Environment: **Node**
-- Build Command: `npm install`
-- Start Command: `npm start`
-- Instance Type: **Free**
-
-Click **Create Web Service**.
-
-Render will deploy in about 2 minutes. You will get a URL like:
-```
-https://vic-alert-system.onrender.com
