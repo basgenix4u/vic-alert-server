@@ -15,33 +15,61 @@ let deviceData = {
 let sosHistory = [];
 let locationHistory = [];
 
-app.post('/update', (req, res) => {
-  const d = req.body;
-  deviceData.distance=parseFloat(d.distance)||999;
-  deviceData.zone=d.zone||"SAFE";
-  deviceData.sosCount=parseInt(d.sosCount)||0;
-  deviceData.sosActive=d.sosActive==="true";
-  deviceData.mapsLink=d.mapsLink||"";
-  deviceData.weather=d.weather||"Unknown";
-  deviceData.temperature=parseFloat(d.temperature)||0;
-  deviceData.humidity=parseFloat(d.humidity)||0;
-  deviceData.windSpeed=parseFloat(d.windSpeed)||0;
-  deviceData.weatherId=parseInt(d.weatherId)||800;
-  deviceData.weatherAlert=d.weatherAlert||"None";
-  deviceData.systemStatus=d.systemStatus||"ACTIVE";
-  deviceData.ipAddress=d.ipAddress||"";
-  deviceData.lastUpdate=new Date().toLocaleTimeString('en-US',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const lat=parseFloat(d.lat),lng=parseFloat(d.lng);
-  if(lat&&lng&&lat!==0&&lng!==0){
-    deviceData.lat=lat;deviceData.lng=lng;deviceData.hasLocation=true;
-    locationHistory.push({lat,lng,time:deviceData.lastUpdate});
-    if(locationHistory.length>50)locationHistory.shift();
+app.all('/update', (req, res) => {
+  const d = { ...req.query, ...req.body };
+
+  console.log('UPDATE RECEIVED:', d);
+
+  deviceData.distance = parseFloat(d.distance) || 999;
+  deviceData.zone = d.zone || "SAFE";
+  deviceData.sosCount = parseInt(d.sosCount) || 0;
+  deviceData.sosActive = d.sosActive === "true" || d.sosActive === true;
+  deviceData.mapsLink = d.mapsLink || "";
+  deviceData.weather = d.weather || "Unknown";
+  deviceData.temperature = parseFloat(d.temperature) || 0;
+  deviceData.humidity = parseFloat(d.humidity) || 0;
+  deviceData.windSpeed = parseFloat(d.windSpeed) || 0;
+  deviceData.weatherId = parseInt(d.weatherId) || 800;
+  deviceData.weatherAlert = d.weatherAlert || "None";
+  deviceData.systemStatus = d.systemStatus || "ACTIVE";
+  deviceData.ipAddress = d.ipAddress || "";
+
+  deviceData.lastUpdate = new Date().toLocaleTimeString('en-US', {
+    hour12: true,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
+  const lat = parseFloat(d.lat ?? d.latitude ?? d.Latitude);
+  const lng = parseFloat(d.lng ?? d.lon ?? d.longitude ?? d.Longitude);
+
+  if (!Number.isNaN(lat) && !Number.isNaN(lng) && lat !== 0 && lng !== 0) {
+    deviceData.lat = lat;
+    deviceData.lng = lng;
+    deviceData.hasLocation = true;
+
+    locationHistory.push({ lat, lng, time: deviceData.lastUpdate });
+    if (locationHistory.length > 50) locationHistory.shift();
   }
-  if(d.sosActive==="true"){
-    sosHistory.unshift({time:deviceData.lastUpdate,location:deviceData.mapsLink,lat:deviceData.lat,lng:deviceData.lng,count:deviceData.sosCount});
-    if(sosHistory.length>20)sosHistory.pop();
+
+  if (deviceData.sosActive) {
+    sosHistory.unshift({
+      time: deviceData.lastUpdate,
+      location: deviceData.mapsLink,
+      lat: deviceData.lat,
+      lng: deviceData.lng,
+      count: deviceData.sosCount
+    });
+    if (sosHistory.length > 20) sosHistory.pop();
   }
-  res.json({status:"ok"});
+
+  res.json({
+    status: "ok",
+    savedLat: deviceData.lat,
+    savedLng: deviceData.lng,
+    hasLocation: deviceData.hasLocation
+  });
 });
 
 app.get('/data',(req,res)=>{
