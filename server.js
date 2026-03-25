@@ -14,6 +14,7 @@ let deviceData = {
 };
 let sosHistory = [];
 let locationHistory = [];
+let sosLatched = false;
 
 app.all('/update', (req, res) => {
   const d = { ...req.query, ...req.body };
@@ -53,17 +54,19 @@ app.all('/update', (req, res) => {
     if (locationHistory.length > 50) locationHistory.shift();
   }
 
-  if (deviceData.sosActive) {
-    sosHistory.unshift({
-      time: deviceData.lastUpdate,
-      location: deviceData.mapsLink,
-      lat: deviceData.lat,
-      lng: deviceData.lng,
-      count: deviceData.sosCount
-    });
-    if (sosHistory.length > 20) sosHistory.pop();
-  }
-
+  if (deviceData.sosActive && !sosLatched) {
+  sosHistory.unshift({
+    time: deviceData.lastUpdate,
+    location: deviceData.mapsLink,
+    lat: deviceData.lat,
+    lng: deviceData.lng,
+    count: deviceData.sosCount
+  });
+  if (sosHistory.length > 20) sosHistory.pop();
+  sosLatched = true;
+} else if (!deviceData.sosActive) {
+  sosLatched = false;
+}
   res.json({
     status: "ok",
     savedLat: deviceData.lat,
