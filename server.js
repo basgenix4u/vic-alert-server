@@ -55,6 +55,9 @@ app.all('/update', (req, res) => {
   }
 
   if (deviceData.sosActive && !sosLatched) {
+
+  deviceData.lastSosTime = deviceData.lastUpdate;
+
   sosHistory.unshift({
     time: deviceData.lastUpdate,
     location: deviceData.mapsLink,
@@ -62,17 +65,24 @@ app.all('/update', (req, res) => {
     lng: deviceData.lng,
     count: deviceData.sosCount
   });
+
   if (sosHistory.length > 20) sosHistory.pop();
+
   sosLatched = true;
+
 } else if (!deviceData.sosActive) {
+
   sosLatched = false;
+
 }
-  res.json({
-    status: "ok",
-    savedLat: deviceData.lat,
-    savedLng: deviceData.lng,
-    hasLocation: deviceData.hasLocation
-  });
+
+res.json({
+  status: "ok",
+  savedLat: deviceData.lat,
+  savedLng: deviceData.lng,
+  hasLocation: deviceData.hasLocation
+});
+
 });
 
 app.get('/data',(req,res)=>{
@@ -1139,7 +1149,7 @@ body{
       <div class="wx-card">
         <div class="wx-top">
           <span class="sos-head-txt">Current Conditions</span>
-          <span class="wx-loc" id="wxLoc">Taraba, NG</span>
+          <span class="wx-loc" id="wxLoc">Wukari, NG</span>
         </div>
         <div class="wx-body">
           <div class="wx-hero">
