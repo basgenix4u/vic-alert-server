@@ -1,258 +1,195 @@
-VIC Alert System — Setup & Operation Guide
-System Overview
+# VIC Alert Server
 
-The VIC Alert System is an IoT-based wearable assistive device designed for visually impaired individuals. The system integrates obstacle detection, environmental hazard monitoring, emergency SOS alerts, and real-time location tracking through a cloud-based dashboard accessible to caregivers.
+VIC Alert Server is a Node.js/Express backend and real-time dashboard for an IoT assistive safety system designed to support visually impaired users with obstacle monitoring, SOS alerts, environmental updates and caregiver visibility.
 
-The system consists of four main components:
+👤 **Author:** [Abdulbasit Abdulalim](https://github.com/basgenix4u)
 
-ESP32 Smart Wearable Device
-Smartphone (GPS Logger + Hotspot)
-Cloud Dashboard (Render Server)
-Blynk Mobile App (Notifications & Monitoring)
+---
 
-These components work together to provide real-time monitoring, alerts, and safety assistance.
+## Product Overview
 
-System Architecture
+The VIC Alert System connects an ESP32-based wearable device, smartphone GPS data and a cloud dashboard. The server receives telemetry from the device, stores the latest status in memory and exposes a dashboard for caregivers to monitor safety events.
 
-System Flow:
+This project demonstrates backend API design, IoT telemetry handling, real-time dashboard rendering and assistive-technology product thinking.
 
-Blind User Device → ESP32
-ESP32 → Smartphone Hotspot
-Smartphone GPS Logger → Render Server
-ESP32 → Render Server
-Render Server → Web Dashboard
-Render Server → Blynk Notification
-Caregiver → Monitor Dashboard
+---
 
-Required Applications
+## System Architecture
 
-Install the following apps:
+```txt
+ESP32 Wearable Device
+        |
+        |  telemetry: distance, zone, SOS, weather, GPS
+        v
+Node.js / Express Server
+        |
+        |-- /update  receives device updates
+        |-- /data    returns latest device state
+        |-- /        caregiver dashboard
+        v
+Caregiver Dashboard / Mobile Browser
+```
 
-Blind User Phone
+---
 
-Install:
+## Key Features
 
-GPS Logger (by BasicAirData)
-Serial Bluetooth Terminal
-Mobile Hotspot enabled
-Caregiver Phone
+- Express.js telemetry server
+- Device update endpoint for ESP32/smartphone data
+- Real-time JSON data endpoint
+- Caregiver dashboard rendered from the server
+- SOS history tracking
+- Location history tracking
+- Obstacle distance and safety zone monitoring
+- Weather/environmental status display
+- CORS and JSON/form-body support
+- Render/VPS deployment-ready structure
 
-Install:
+---
 
-Blynk IoT App
-Step-By-Step Setup
-Step 1 — Configure ESP32 WiFi (Bluetooth Setup)
+## Tech Stack
 
-Power ON the ESP32 device.
+| Area | Technologies |
+| --- | --- |
+| Runtime | Node.js |
+| Backend | Express.js |
+| Middleware | CORS, JSON/body parsing |
+| Dashboard | Server-rendered HTML/CSS/JS |
+| Maps | Leaflet frontend integration |
+| Deployment Target | Render, Railway, Fly.io, VPS or similar Node hosting |
 
-Open Serial Bluetooth Terminal on the blind user phone.
+---
 
-Connect to:
+## API Endpoints
 
-ESP32 Bluetooth Device
+### `GET /`
 
-Send credentials:
+Returns the caregiver monitoring dashboard.
 
-SSID:YourHotspotName
-PASS:YourHotspotPassword
-SAVE
+### `GET /data`
+
+Returns the current device state, SOS history and location history.
+
+Example response:
+
+```json
+{
+  "distance": 120,
+  "zone": "SAFE",
+  "sosCount": 0,
+  "sosActive": false,
+  "systemStatus": "ACTIVE",
+  "lat": 7.85,
+  "lng": 9.78,
+  "hasLocation": true,
+  "sosHistory": [],
+  "locationHistory": []
+}
+```
+
+### `GET /update`
+
+Accepts telemetry updates through query parameters.
 
 Example:
 
-SSID:VictorPhone
-PASS:12345678
-SAVE
+```txt
+/update?distance=100&zone=SAFE&sosActive=false&lat=7.85&lng=9.78&weather=Clear&temperature=28
+```
 
-ESP32 will store credentials and reconnect automatically next time.
+### `POST /update`
 
-Step 2 — Enable Phone Hotspot
+Accepts telemetry updates through JSON or form body.
 
-On blind user's phone:
+Example body:
 
-Settings → Hotspot → Turn ON
+```json
+{
+  "distance": 80,
+  "zone": "CAUTION",
+  "sosActive": true,
+  "sosCount": 1,
+  "lat": 7.85,
+  "lng": 9.78,
+  "weather": "Cloudy",
+  "temperature": 27
+}
+```
 
-ESP32 connects automatically to hotspot.
+---
 
-Step 3 — Setup GPS Logger
+## Getting Started
 
-Open GPS Logger App
+### 1. Clone the repository
 
-Go to:
+```bash
+git clone https://github.com/basgenix4u/vic-alert-server.git
+cd vic-alert-server
+```
 
-Settings → Logging Details
+### 2. Install dependencies
 
-Set:
+```bash
+npm install
+```
 
-Logging Interval → 5 seconds
+### 3. Run locally
 
-Go to:
+```bash
+npm start
+```
 
-Settings → Auto Send
+Open http://localhost:3000.
 
-Enable:
+---
 
-Auto Send → ON
+## Environment Variables
 
-Go to:
+This version only requires an optional `PORT` variable.
 
-Settings → Custom URL
+```bash
+PORT=3000
+```
 
-Enable:
+---
 
-Log to custom URL → ON
-Allow Auto Sending → ON
+## Deployment
 
-Enter URL:
+Deploy to any Node.js hosting service.
 
-https://vic-alert-system.onrender.com/update?lat=%LAT&lng=%LON
+Recommended steps:
 
-Save.
+1. Set the start command to `npm start`.
+2. Set `PORT` if the host requires it.
+3. Deploy the server.
+4. Configure the ESP32 device to send updates to the deployed `/update` URL.
+5. Open the deployed dashboard URL on the caregiver device.
 
-Start Logging.
+---
 
-GPS Logger now sends live location automatically.
+## Roadmap
 
-Step 4 — Open Dashboard
+- Persist telemetry in a database
+- Add authentication for caregiver dashboard
+- Add device registration and API keys
+- Add WebSocket/SSE real-time updates
+- Add SMS/email/push notifications for SOS events
+- Add multi-device support
+- Add automated tests and CI checks
+- Add Docker support
 
-Caregiver opens:
+---
 
-https://vic-alert-system.onrender.com
+## Safety Disclaimer
 
-Dashboard shows:
+This project is an assistive technology prototype. It should not be used as the only safety mechanism in critical situations without proper hardware validation, testing, redundancy and emergency-response planning.
 
-Live Map Location
-Distance to obstacle
-Zone status
-SOS status
-Weather conditions
-System status
-Step 5 — Setup Blynk App
+---
 
-Open Blynk App
+## Author
 
-Add Widgets:
+Built and maintained by **Abdulbasit Abdulalim**.
 
-Distance → V2
-Zone → V3
-System Status → V4
-SOS Count → V5
-Weather → V9
-Temperature → V10
-
-Blynk provides:
-
-Push notifications
-System monitoring
-Emergency alerts
-How The System Works
-Normal Operation
-
-ESP32 detects obstacle
-Device vibrates and buzzes
-ESP32 sends data to server
-Dashboard updates in real time
-
-Location Tracking
-
-GPS Logger sends phone location
-Server receives coordinates
-Dashboard map updates
-Caregiver sees live movement
-
-Emergency SOS
-
-Blind user presses SOS button
-
-ESP32:
-
-Sends SOS to server
-Sends Blynk notification
-Dashboard shows emergency
-Location displayed on map
-
-Caregiver immediately sees:
-
-Emergency alert
-Current location
-Device status
-Environmental Hazard Alert
-
-ESP32 monitors environmental conditions
-
-If hazard detected:
-
-Device:
-
-Vibrates
-Beeps
-Flashes LED
-
-Server:
-
-Updates dashboard
-Sends Blynk notification
-Roles of Each Component
-ESP32 Device
-
-Handles:
-
-Obstacle detection
-SOS detection
-Environmental monitoring
-Buzzer & vibration alerts
-Data transmission
-GPS Logger
-
-Handles:
-
-Real-time location tracking
-Automatic coordinate sending
-Background operation
-Render Dashboard
-
-Handles:
-
-Live map monitoring
-System data display
-SOS tracking
-Caregiver interface
-Blynk App
-
-Handles:
-
-Push notifications
-System widgets
-Emergency alerts
-Internet Requirements
-
-Blind User Phone:
-
-Hotspot ON
-GPS Logger Running
-
-Caregiver:
-
-Internet Browser
-Final Operation Example
-
-Blind user walking outside
-
-Obstacle detected → Device vibrates
-
-Rain approaching → Device beeps
-
-User presses SOS → Caregiver notified
-
-Caregiver opens dashboard → sees location
-
-System provides full real-time safety monitoring.
-
-Dashboard Link
-https://vic-alert-system.onrender.com
-System Status
-
-Fully Real-Time
-Cloud-Connected
-IoT-Based
-Low-Cost
-Assistive Technology Ready
+- GitHub: https://github.com/basgenix4u
+- Website: https://alimswrite.com
+- LinkedIn: https://www.linkedin.com/in/abdulbasit-abdulalim-94a701354

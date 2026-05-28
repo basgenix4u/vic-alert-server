@@ -89,6 +89,10 @@ app.get('/data',(req,res)=>{
   res.json({...deviceData,sosHistory,locationHistory});
 });
 
+app.get('/health',(req,res)=>{
+  res.json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+});
+
 app.get('/',(req,res)=>{
   res.send(`<!DOCTYPE html>
 <html lang="en">
