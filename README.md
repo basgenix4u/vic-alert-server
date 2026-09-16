@@ -4,6 +4,13 @@ VIC Alert Server is a Node.js/Express backend and real-time dashboard for an IoT
 
 👤 **Author:** [Abdulbasit Abdulalim](https://github.com/basgenix4u)
 
+
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+[![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com)
+[![IoT](https://img.shields.io/badge/IoT-ESP32-E7352C?style=for-the-badge&logo=espressif&logoColor=white)](https://www.espressif.com)
+[![Leaflet](https://img.shields.io/badge/Maps-Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](./LICENSE)
+
 ---
 
 ## Product Overview
@@ -193,3 +200,11 @@ Built and maintained by **Abdulbasit Abdulalim**.
 - GitHub: https://github.com/basgenix4u
 - Website: https://alimswrite.com
 - LinkedIn: https://www.linkedin.com/in/abdulbasit-abdulalim-94a701354
+
+---
+
+<div align="center">
+
+Built by [Abdulbasit Abdulalim](https://github.com/basgenix4u)
+
+</div>
